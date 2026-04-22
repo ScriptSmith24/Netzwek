@@ -18,3 +18,5 @@ netsh winsock reset
 netsh int ip reset
 
 danach reset und es sollte wieder klappen
+
+der Server kann nicht auf öffentlichen netzen gehostet werden wegen der firewall und der verbietung des ports deswegen muss das entweder auf privaten netzen oder auch ggf über hotspot gemacht werden 
