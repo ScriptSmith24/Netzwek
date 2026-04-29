@@ -20,3 +20,6 @@ netsh int ip reset
 danach reset und es sollte wieder klappen
 
 der Server kann nicht auf öffentlichen netzen gehostet werden wegen der firewall und der verbietung des ports deswegen muss das entweder auf privaten netzen oder auch ggf über hotspot gemacht werden 
+
+
+Die Verschüsselung Kann dann eigentlich auch server.c gemacht werden oder kann in security.c gemacht werden und dann eingebunden werden
