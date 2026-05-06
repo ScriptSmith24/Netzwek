@@ -1,0 +1,238 @@
+\documentclass[11pt]{article}
+
+% --- Encoding, Sprache, Schrift ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+
+% --- Farben & Mathe ---
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb,amsfonts}
+
+% --- Tabellen ---
+\usepackage{booktabs}
+\usepackage{multirow}
+
+% --- Einheiten ---
+\usepackage{siunitx}
+
+% --- Seitenränder ---
+\usepackage[top=2cm, bottom=2cm, left=2cm, right=2cm]{geometry}
+
+% --- Bilder & Floats ---
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{listings}
+
+% --- Bild-/Tabellenunterschriften ---
+\usepackage[font=footnotesize,justification=centering]{caption}
+
+% --- Code ---
+\usepackage[newfloat]{minted}
+
+% --- Hyperref ---
+\usepackage{hyperref}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=blue,
+  citecolor=gray,
+  pdftitle={Chatroom Netzwerkprogrammierung},
+}
+
+% --- Listings ---
+\SetupFloatingEnvironment{listing}{name=Source Code}
+\newenvironment{code}{\captionsetup{type=listing}}{}
+
+% --- Eigene Befehle ---
+\newcommand*{\quelle}[1]{{\raggedleft\footnotesize Quelle:~#1}}
+\newcommand*{\tab}[1]{\textit{Tabelle~\ref{#1}}}
+\newcommand*{\fig}[1]{\textit{Abbildung~\ref{#1}}}
+
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TITELSEITE
+\begin{titlepage}
+    \centering
+    \includegraphics[scale=0.35]{bht.png}
+    \vspace*{2cm}
+    
+    \Huge
+    \textbf{Netzwerkprogrammierung Projekt}
+    
+    \vspace{0.4cm}
+    \Large
+    \textbf{Chatroom Entwicklung}
+    
+    \vspace{1.5cm}
+    
+    \begin{tabular}{ll}
+        \textbf{Autoren:} & Moritz Manfred Przybylsky (953381) \\
+                          & Melisa Güzel (s901998)\\
+                          & Friedemann Grothe \\
+                          & Aziz \\
+        \addlinespace
+        \textbf{Dozent:}  & Prof. Dr.-Ing. David Dietrich \\
+    \end{tabular}
+
+    \vfill
+
+    \begin{flushright}    
+        Fachbereich VII - Elektrotechnik \\
+        Kommunikationstechnik (KT)\\        
+        Sommersemester 2026 \\
+        \today
+    \end{flushright}
+\end{titlepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% --- Verzeichnisse ---
+\clearpage
+\pagenumbering{gobble}
+\tableofcontents
+\listoffigures
+\listoftables
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Einleitung}
+In diesem Projekt entwickeln wir einen einfachen Chatroom im Rahmen der Netzwerkprogrammierung.  
+Ziel ist es, die Kommunikation zwischen mehreren Clients über ein Netzwerk zu verstehen und praktisch umzusetzen.
+
+\subsection{Ziel des Projekts}
+Ziel ist die Entwicklung eines funktionierenden Client-Server-Chatrooms.
+
+\subsection{Motivation}
+Netzwerkkommunikation ist eine zentrale Grundlage moderner Anwendungen wie Messenger oder Online-Spiele.
+
+\subsection{Überblick}
+Der Chatroom basiert auf einer Client-Server-Architektur mit TCP-Verbindungen.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Grundlagen der Netzwerkprogrammierung}
+
+\subsection{Netzwerkkommunikation}
+Daten werden über Netzwerke in Form von Paketen übertragen.
+
+\subsection{Client-Server-Modell}
+Ein Server verwaltet Verbindungen, Clients senden und empfangen Daten.
+
+\subsection{TCP vs UDP}
+Wir nutzen TCP wegen seiner zuverlässigen Datenübertragung.
+
+\subsection{Sockets}
+Sockets ermöglichen die Kommunikation zwischen Programmen über das Netzwerk.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Anforderungen}
+
+\subsection{Funktionale Anforderungen}
+\begin{itemize}
+    \item Nachrichten senden und empfangen
+    \item Mehrere Nutzer gleichzeitig
+    \item Benutzername
+\end{itemize}
+
+\subsection{Nicht-funktionale Anforderungen}
+\begin{itemize}
+    \item Stabilität
+    \item Geringe Latenz
+    \item Nachrichten für alle Teilnehmer anzeigen 
+    \item Schutz der Nutzerdaten, verschlüsselte Übertragung 
+\end{itemize}
+
+ \subsection{USE Cases}
+ Nutzer registriert sich im System 
+ Nutzer sendet eine Nachricht 
+ Nutzer meldet sich im Chatroom an
+ Nutzer sieht, wer online ist ?
+ 
+    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Systemdesign}
+
+\subsection{Architektur}
+Client-Server-Struktur mit zentralem Server.
+
+\subsection{Kommunikation}
+Nachrichten werden über TCP-Sockets gesendet.
+
+\subsection{Protokoll}
+Ein einfaches Textprotokoll für Nachrichten.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Implementierung}
+
+\subsection{Server}
+Der Server verwaltet alle Clients.
+
+\subsection{Client}
+Der Client verbindet sich mit dem Server und sendet Nachrichten.
+
+\subsection{Threads}
+Jeder Client läuft in einem eigenen Thread.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Funktionen}
+
+\begin{itemize}
+    \item Chatten in Echtzeit
+    \item Mehrere Nutzer
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Tests}
+
+\subsection{Funktionstests}
+Überprüfung der Nachrichtenübertragung.
+
+\subsection{Lasttests}
+Mehrere Clients gleichzeitig.
+
+\subsection{Fehleranalyse}
+Probleme bei Verbindungsabbrüchen.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Probleme und Lösungen}
+
+\subsection{Verbindungsprobleme}
+Teilweise Verbindungsabbrüche wurden behandelt.
+
+\subsection{Synchronisation}
+Threads mussten synchronisiert werden.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Erweiterungen}
+
+\begin{itemize}
+    \item GUI (grafische Oberfläche)
+    \item Private Chats
+    \item Verschlüsselung
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Fazit}
+Das Projekt zeigt die Grundlagen der Netzwerkkommunikation und Client-Server-Systeme.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Quellen}
+\begin{itemize}
+    \item Vorlesungsunterlagen Netzwerkprogrammierung
+    \item Dokumentation zu Sockets
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Anhang}
+
+\subsection{Codeausschnitte}
+\subsection{Screenshots}
+\subsection{Installationsanleitung}
+
+\end{document}
