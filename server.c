@@ -10,6 +10,8 @@ typedef struct {
     char username[100];
     char text[500];
 } Message;
+Message unencry[100];
+void Caesar_Encrypt(unencry);
 
 Message messages[100];
 int message_count = 0;
