@@ -1,2 +1,103 @@
-//Caeser
+#include <stdio.h>
+#include <string.h>
+#include <openssl/evp.h>
+#include <openssl/rand.h>
 
+#define KEY_SIZE 32     // 32 Byte = AES-256
+#define IV_SIZE 12      // 12 Byte für AES-GCM
+#define TAG_SIZE 16     // Prüfwert gegen Manipulation
+#define MAX_TEXT 256
+
+int encrypt_caesar(void)
+{
+    unsigned char key[KEY_SIZE];          // geheimer Schlüssel
+    unsigned char iv[IV_SIZE];            // muss pro Nachricht neu sein
+    unsigned char tag[TAG_SIZE];          // Prüfwert
+
+    unsigned char text[MAX_TEXT];         // Klartext
+    unsigned char encrypted[MAX_TEXT];    // verschlüsselter Text
+    unsigned char decrypted[MAX_TEXT];    // entschlüsselter Text
+
+    int text_len;
+    int encrypted_len;
+    int decrypted_len;
+    int len;
+
+    EVP_CIPHER_CTX *ctx;
+
+    // Zufälligen Schlüssel erzeugen
+    RAND_bytes(key, KEY_SIZE);
+
+    // Zufälligen IV erzeugen
+    RAND_bytes(iv, IV_SIZE);
+
+    printf("Nachricht eingeben: ");
+    fgets((char *)text, MAX_TEXT, stdin);
+
+    text_len = strlen((char *)text);
+
+    /*
+     * =========================
+     * Verschlüsselung
+     * =========================
+     */
+
+    ctx = EVP_CIPHER_CTX_new();
+
+    // AES-256-GCM auswählen
+    EVP_EncryptInit_ex(ctx, EVP_aes_256_gcm(), NULL, NULL, NULL);
+
+    // Schlüssel und IV setzen
+    EVP_EncryptInit_ex(ctx, NULL, NULL, key, iv);
+
+    // Text verschlüsseln
+    EVP_EncryptUpdate(ctx, encrypted, &len, text, text_len);
+    encrypted_len = len;
+
+    // Verschlüsselung abschließen
+    EVP_EncryptFinal_ex(ctx, encrypted + len, &len);
+    encrypted_len += len;
+
+    // Tag erzeugen
+    EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_GET_TAG, TAG_SIZE, tag);
+
+    EVP_CIPHER_CTX_free(ctx);
+
+    /*
+     * =========================
+     * Entschlüsselung
+     * =========================
+     */
+
+    ctx = EVP_CIPHER_CTX_new();
+
+    // AES-256-GCM auswählen
+    EVP_DecryptInit_ex(ctx, EVP_aes_256_gcm(), NULL, NULL, NULL);
+
+    // Schlüssel und IV setzen
+    EVP_DecryptInit_ex(ctx, NULL, NULL, key, iv);
+
+    // Text entschlüsseln
+    EVP_DecryptUpdate(ctx, decrypted, &len, encrypted, encrypted_len);
+    decrypted_len = len;
+
+    // Tag setzen, damit geprüft werden kann, ob die Nachricht echt ist
+    EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_TAG, TAG_SIZE, tag);
+
+    // Wenn diese Prüfung fehlschlägt, wurde etwas verändert
+    if (EVP_DecryptFinal_ex(ctx, decrypted + len, &len) <= 0)
+    {
+        printf("Entschlüsselung fehlgeschlagen!\n");
+        EVP_CIPHER_CTX_free(ctx);
+        return 1;
+    }
+
+    decrypted_len += len;
+    decrypted[decrypted_len] = '\0';
+
+    EVP_CIPHER_CTX_free(ctx);
+
+    printf("\nEntschlüsselte Nachricht:\n%s\n", decrypted);
+
+    return 0;
+}
