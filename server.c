@@ -12,8 +12,8 @@ typedef struct {
 } Message;
 Message unencry[100];
 void encrypt(unencry){
-
     
+
 }
 Message messages[100];
 int message_count = 0;
