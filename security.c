@@ -1,29 +1,29 @@
 #include <stdio.h>
+#include <server.c>
+#include <string.h>
 
 // Funktion zum Verschlüsseln
-void verschluesseln(char text[])
+void get_encryptionVariable(Message)
 {
-    for (int i = 0; text[i] != '\0'; i++)
-    {
-        text[i] = text[i] + 3;
-    }
+    int encryptionVariable = strlen(username);
 }
 
-int main()
+void Caesar_Encrypt(Message)
 {
-    char text[] = "hallo";
-
-    // Funktion aufrufen
-    verschluesseln(text);
-
-    // Verschlüsselten Text ausgeben
-    printf("%s\n", text);
-
-    // ASCII-Werte ausgeben
+    get_encryptionVariable(Message);
     for (int i = 0; text[i] != '\0'; i++)
     {
-        printf("%d ", text[i]);
+        encryptText[i] = text[i] + encryptionVariable;
     }
+    return encryptText
+}
 
-    return 0;
+void Caesar_Decrypt(Message)
+{
+    get_encryptionVariable(Message);
+    for (int i = 0; text[i] != '\0'; i++)
+    {
+        encryptText[i] = text[i] - encryptionVariable;
+    }
+    return encryptText
 }
