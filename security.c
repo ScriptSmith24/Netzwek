@@ -1,30 +1,40 @@
 #include <stdio.h>
 #include <server.c>
 #include <string.h>
+#include "h.h"
+
+typedef struct {
+    char username[100];
+    char text[500];
+} UnencryptedMessage;
+
+typedef struct {
+    char username[100];
+    char text[500];
+} EncryptedMessage;
+
+int encryptionVariable = 0;
 
 // Funktion zum Verschlüsseln
-int get_encryptionVariable(unencry)
+void get_encryptionVariable(Message *u)
 {
-    int encryptionVariable = strlen(username);
-    return encryptionVariable;
+    encryptionVariable = strlen(Message.username);
 }
 
-void Caesar_Encrypt(unencry)
+void Caesar_Encrypt(Message *u)
 {
-    get_encryptionVariable(unencry);
-    for (int i = 0; text[i] != '\0'; i++)
+    get_encryptionVariable(Message *u);
+    for (int i = 0; Message.text[i] != '\0'; i++)
     {
-        encryptText[i] = text[i] + encryptionVariable;
+        Message.text[i] = Message.text[i] + encryptionVariable;
     }
-    return encryptText
+
 }
 
-void Caesar_Decrypt(unencry)
+void Caesar_Decrypt(Message *u)
 {
-    get_encryptionVariable(unencry);
-    for (int i = 0; text[i] != '\0'; i++)
+    for (int i = 0; Message.text[i] != '\0'; i++)
     {
-        encryptText[i] = text[i] - encryptionVariable;
+        Message.text[i] = Message.text[i] - encryptionVariable;
     }
-    return encryptText
 }

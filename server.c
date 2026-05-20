@@ -3,15 +3,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "h.h"
 
 #pragma comment(lib, "ws2_32.lib")
-
-typedef struct {
-    char username[100];
-    char text[500];
-} Message;
-Message unencry[100];
-void Caesar_Encrypt(unencry);
 
 Message messages[100];
 int message_count = 0;
@@ -20,6 +14,8 @@ void add_message(char *username, char *text) {
     if (message_count >= 100) {
         return;
     }
+    void Caesar_Encrypt(Message *u);
+    void Caesar_Decrypt(Message *u);
 
     strcpy(messages[message_count].username, username);
     strcpy(messages[message_count].text, text);
