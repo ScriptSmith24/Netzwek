@@ -16,25 +16,26 @@ typedef struct {
 int encryptionVariable = 0;
 
 // Funktion zum Verschlüsseln
-void get_encryptionVariable(Message *u)
+void get_encryptionVariable(const Message *u)
 {
-    encryptionVariable = strlen(Message.username);
+    encryptionVariable = strlen(u->username);
 }
 
 void Caesar_Encrypt(Message *u)
 {
     get_encryptionVariable(Message *u);
-    for (int i = 0; Message.text[i] != '\0'; i++)
+    for (int i = 0; u->text[i] != '\0'; i++)
     {
-        Message.text[i] = Message.text[i] + encryptionVariable;
+        u->text[i] = u->text[i] + encryptionVariable;
     }
 
 }
 
 void Caesar_Decrypt(Message *u)
 {
-    for (int i = 0; Message.text[i] != '\0'; i++)
+    get_encryptionVariable(Message *u);
+    for (int i = 0; u->text[i] != '\0'; i++)
     {
-        Message.text[i] = Message.text[i] - encryptionVariable;
+        u->text[i] = u->text[i] - encryptionVariable;
     }
 }
