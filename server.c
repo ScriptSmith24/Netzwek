@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include "h.h"
 
 #pragma comment(lib, "ws2_32.lib")
@@ -10,18 +11,62 @@
 Message messages[100];
 int message_count = 0;
 
+void url_decode(const char *src, char *dst, size_t dst_size) {
+    size_t i = 0;
+    while (*src != '\0' && i + 1 < dst_size) {
+        if (*src == '+') {
+            dst[i++] = ' ';
+            src++;
+            continue;
+        }
+
+        if (*src == '%' && isxdigit((unsigned char)src[1]) && isxdigit((unsigned char)src[2])) {
+            char hex[3] = { src[1], src[2], '\0' };
+            dst[i++] = (char)strtol(hex, NULL, 16);
+            src += 3;
+            continue;
+        }
+
+        dst[i++] = *src++;
+    }
+    dst[i] = '\0';
+}
+
 void add_message(char *username, char *text) {
     if (message_count >= 100) {
         return;
     }
-    void Caesar_Encrypt(Message *u);
-    void Caesar_Decrypt(Message *u);
 
-    strcpy(messages[message_count].username, username);
-    strcpy(messages[message_count].text, text);
+    strncpy(messages[message_count].username, username, sizeof(messages[message_count].username) - 1);
+    messages[message_count].username[sizeof(messages[message_count].username) - 1] = '\0';
+    strncpy(messages[message_count].text, text, sizeof(messages[message_count].text) - 1);
+    messages[message_count].text[sizeof(messages[message_count].text) - 1] = '\0';
     message_count++;
 
     printf("Nachricht hinzugefuegt: %s - %s\n", username, text);
+}
+
+void append_json_escaped(char *dest, size_t dest_size, const char *src) {
+    size_t len = strlen(dest);
+    while (*src != '\0' && len + 1 < dest_size) {
+        unsigned char c = (unsigned char)*src++;
+        if (c == '"' || c == '\\') {
+            if (len + 2 >= dest_size) break;
+            dest[len++] = '\\';
+            dest[len++] = c;
+        } else if (c == '\b' || c == '\f' || c == '\n' || c == '\r' || c == '\t') {
+            if (len + 2 >= dest_size) break;
+            dest[len++] = '\\';
+            dest[len++] = (c == '\b' ? 'b' : c == '\f' ? 'f' : c == '\n' ? 'n' : c == '\r' ? 'r' : 't');
+        } else if (c < 0x20) {
+            if (len + 6 >= dest_size) break;
+            sprintf(dest + len, "\\u%04x", c);
+            len += 6;
+        } else {
+            dest[len++] = c;
+        }
+    }
+    dest[len] = '\0';
 }
 
 void create_messages_json(char *json_buffer) {
@@ -32,9 +77,12 @@ void create_messages_json(char *json_buffer) {
             strcat(json_buffer, ",");
         }
 
-        char message_json[700];
-        sprintf(message_json, "{\"username\":\"%s\",\"text\":\"%s\"}",
-                messages[i].username, messages[i].text);
+        char message_json[1400] = {0};
+        strcat(message_json, "{\"username\":\"");
+        append_json_escaped(message_json, sizeof(message_json), messages[i].username);
+        strcat(message_json, "\",\"text\":\"");
+        append_json_escaped(message_json, sizeof(message_json), messages[i].text);
+        strcat(message_json, "\"}");
         strcat(json_buffer, message_json);
     }
 
@@ -44,17 +92,32 @@ void create_messages_json(char *json_buffer) {
 void handle_send_request(char *request_body) {
     char username[100] = {0};
     char messagetext[500] = {0};
+    char encoded_username[200] = {0};
+    char encoded_message[1000] = {0};
 
     char *username_pos = strstr(request_body, "username=");
     if (username_pos) {
-        sscanf(username_pos, "username=%99s", username);
-        char *and_pos = strchr(username, '&');
-        if (and_pos) *and_pos = '\0';
+        username_pos += strlen("username=");
+        char *and_pos = strchr(username_pos, '&');
+        size_t len = and_pos ? (size_t)(and_pos - username_pos) : strlen(username_pos);
+        if (len >= sizeof(encoded_username)) {
+            len = sizeof(encoded_username) - 1;
+        }
+        strncpy(encoded_username, username_pos, len);
+        encoded_username[len] = '\0';
+        url_decode(encoded_username, username, sizeof(username));
     }
 
     char *message_pos = strstr(request_body, "message=");
     if (message_pos) {
-        sscanf(message_pos, "message=%499s", messagetext);
+        message_pos += strlen("message=");
+        size_t len = strlen(message_pos);
+        if (len >= sizeof(encoded_message)) {
+            len = sizeof(encoded_message) - 1;
+        }
+        strncpy(encoded_message, message_pos, len);
+        encoded_message[len] = '\0';
+        url_decode(encoded_message, messagetext, sizeof(messagetext));
     }
 
     if (strlen(username) > 0 && strlen(messagetext) > 0) {
@@ -112,7 +175,7 @@ int main() {
             create_messages_json(json_buffer);
 
             char header[256];
-            sprintf(header, "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nConnection: close\r\n\r\n");
+            sprintf(header, "HTTP/1.1 200 OK\r\nContent-Type: application/json; charset=utf-8\r\nConnection: close\r\n\r\n");
             send(new_socket, header, (int)strlen(header), 0);
 
             send(new_socket, json_buffer, (int)strlen(json_buffer), 0);

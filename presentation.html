@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projektpräsentation - Netzwek</title>
+    <link rel="stylesheet" href="presentation.css">
+</head>
+<body>
+    <div class="presentation">
+        <div class="slide active" id="slide-1">
+            <h1>Netzwek Chat-Projekt</h1>
+            <p>Webbasierte Präsentation zur Chat-Anwendung mit C-Server und browserseitiger Verschlüsselung.</p>
+            <p class="hint">Benutze die Pfeile unten, um die Folien zu wechseln.</p>
+        </div>
+
+        <div class="slide" id="slide-2">
+            <h2>Projektübersicht</h2>
+            <ul>
+                <li>Server-seitige Anwendung in <strong>C</strong> mit Winsock.</li>
+                <li>Client-seitige Chat-Oberfläche in HTML/CSS/JavaScript.</li>
+                <li>Nachrichten werden per HTTP an den Server gesendet und als JSON zurückgegeben.</li>
+            </ul>
+        </div>
+
+        <div class="slide" id="slide-3">
+            <h2>Architektur</h2>
+            <ol>
+                <li>Browser lädt <code>Site.html</code>.</li>
+                <li><code>js.js</code> sendet verschlüsselte Nachrichten an <code>/api/send</code>.</li>
+                <li>Server speichert die Nachricht unverändert.</li>
+                <li>Browser fragt <code>/api/messages</code> ab und entschlüsselt die Nachrichten.</li>
+            </ol>
+        </div>
+
+        <div class="slide" id="slide-4">
+            <h2>Verschlüsselung</h2>
+            <p>Die Nachricht wird mit einem einfachen Caesar-Verfahren verschlüsselt.</p>
+            <p>Der Schlüssel ist die Länge des Benutzernamens:</p>
+            <pre>shift = username.length</pre>
+            <p>Beispiel:</p>
+            <pre>username = "Du" → shift = 2</pre>
+            <pre>message = "abcdefg" → gesendet: "cdefghi"</pre>
+        </div>
+
+        <div class="slide" id="slide-5">
+            <h2>Serverrolle</h2>
+            <ul>
+                <li>Empfängt HTTP-POST an <code>/api/send</code>.</li>
+                <li>Parst <code>username</code> und <code>message</code>.</li>
+                <li>Speichert die verschlüsselte Nachricht in einem Array.</li>
+                <li>Antwortet auf <code>/api/messages</code> mit allen gespeicherten Nachrichten.</li>
+            </ul>
+        </div>
+
+        <div class="slide" id="slide-6">
+            <h2>Dateien</h2>
+            <ul>
+                <li><code>server.c</code> – TCP-Server in C.</li>
+                <li><code>Site.html</code> – Chat-Interface.</li>
+                <li><code>js.js</code> – Weblogik, Verschlüsselung und Anzeige.</li>
+                <li><code>style.css</code> – CSS für das Chat-Interface.</li>
+                <li><code>security.js</code> – zusätzliche Verschlüsselungsfunktion, aber nicht benötigt.</li>
+            </ul>
+        </div>
+
+        <div class="slide" id="slide-7">
+            <h2>Build & Nutzung</h2>
+            <p>Server kompilieren mit:</p>
+            <pre>gcc -o server.exe server.c -lws2_32</pre>
+            <p>Dann <code>server.exe</code> starten und im Browser <code>Site.html</code> öffnen.</p>
+        </div>
+
+        <div class="slide" id="slide-8">
+            <h2>Wichtige Hinweise</h2>
+            <ul>
+                <li>Die Verschlüsselung ist einfach und dient nur als Demo.</li>
+                <li>Im Netzwerk sieht man die verschlüsselte Nachricht im HTTP-Body.</li>
+                <li>Für echte Sicherheit müsste man HTTPS und einen stärkeren Algorithmus verwenden.</li>
+            </ul>
+        </div>
+
+        <div class="slide" id="slide-9">
+            <h2>Zusammenfassung</h2>
+            <p>Dieses Projekt zeigt eine einfache Chat-Architektur mit:</p>
+            <ul>
+                <li>Client-seitiger Verschlüsselung</li>
+                <li>Server-Speicherung verschlüsselter Nachrichten</li>
+                <li>JSON-basierter Kommunikation</li>
+                <li>Webbasiertem Chat-Interface</li>
+            </ul>
+            <p class="final">Vielen Dank für die Aufmerksamkeit!</p>
+        </div>
+
+        <div class="controls">
+            <button id="prev">&larr; Zurück</button>
+            <button id="next">Weiter &rarr;</button>
+        </div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        let current = 0;
+
+        const showSlide = index => {
+            slides[current].classList.remove('active');
+            current = (index + slides.length) % slides.length;
+            slides[current].classList.add('active');
+        };
+
+        document.getElementById('prev').addEventListener('click', () => showSlide(current - 1));
+        document.getElementById('next').addEventListener('click', () => showSlide(current + 1));
+
+        document.addEventListener('keydown', event => {
+            if (event.key === 'ArrowRight') showSlide(current + 1);
+            if (event.key === 'ArrowLeft') showSlide(current - 1);
+        });
+    </script>
+</body>
+</html>

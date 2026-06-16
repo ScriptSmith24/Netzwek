@@ -11,13 +11,30 @@ messageInput.addEventListener('keypress', function(event) {
     }
 });
 
+function caesarEncrypt(text, shift) {
+    let encrypted = "";
+    for (let i = 0; i < text.length; i++) {
+        encrypted += String.fromCharCode(text.charCodeAt(i) + shift);
+    }
+    return encrypted;
+}
+
+function caesarDecrypt(text, shift) {
+    let decrypted = "";
+    for (let i = 0; i < text.length; i++) {
+        decrypted += String.fromCharCode(text.charCodeAt(i) - shift);
+    }
+    return decrypted;
+}
+
 function sendMessage() {
     const username = usernameInput.value.trim() || 'Anonym';
     const messageText = messageInput.value.trim();
 
     if (messageText === '') return;
 
-    const data = 'username=' + encodeURIComponent(username) + '&message=' + encodeURIComponent(messageText);
+    const encryptedText = caesarEncrypt(messageText, username.length);
+    const data = 'username=' + encodeURIComponent(username) + '&message=' + encodeURIComponent(encryptedText);
 
     fetch('/api/send', {
         method: 'POST',
@@ -43,9 +60,15 @@ function fetchMessages() {
             messagesContainer.innerHTML = '';
 
             messages.forEach(msg => {
+                const decryptedText = caesarDecrypt(msg.text, msg.username.length);
                 const messageElement = document.createElement('div');
                 messageElement.className = 'message';
-                messageElement.innerHTML = '<strong>' + msg.username + ':</strong> ' + msg.text;
+
+                const strong = document.createElement('strong');
+                strong.textContent = msg.username + ': ';
+
+                messageElement.appendChild(strong);
+                messageElement.appendChild(document.createTextNode(decryptedText));
                 messagesContainer.appendChild(messageElement);
             });
 
@@ -59,3 +82,4 @@ function fetchMessages() {
 fetchMessages();
 
 setInterval(fetchMessages, 1000);
+

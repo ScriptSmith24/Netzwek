@@ -1,0 +1,84 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1b2a49, #2f4868);
+    color: #eef2f7;
+    min-height: 100vh;
+}
+
+.presentation {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+}
+
+.slide {
+    display: none;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 18px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.slide.active {
+    display: block;
+}
+
+h1, h2 {
+    margin-top: 0;
+}
+
+h1 {
+    font-size: 3rem;
+    letter-spacing: 0.04em;
+}
+
+h2 {
+    font-size: 2rem;
+    color: #d4e0ff;
+}
+
+ul, ol {
+    line-height: 1.7;
+    margin: 20px 0;
+}
+
+pre {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 14px 16px;
+    border-radius: 10px;
+    overflow-x: auto;
+    color: #f5f7ff;
+}
+
+.controls {
+    margin-top: 30px;
+    text-align: center;
+}
+
+button {
+    background: #4b6cb7;
+    border: none;
+    color: white;
+    padding: 14px 24px;
+    margin: 0 10px;
+    font-size: 1rem;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.25s ease;
+}
+
+button:hover {
+    background: #344a9a;
+}
+
+.hint {
+    opacity: 0.75;
+}
+
+.final {
+    margin-top: 24px;
+    font-weight: 700;
+}
